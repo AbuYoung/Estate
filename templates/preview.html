@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>数据预览</h2>
+    <div class="upload-info">
+        <p>文件名：{{ upload.filename }}</p>
+        <p>上传时间：{{ upload.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <p>总记录数：{{ upload.record_count }}</p>
+    </div>
+    
+    <div class="data-preview">
+        <h3>前10条记录预览</h3>
+        <div class="table-wrapper">
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        {% for column_id, column_name in columns %}
+                        <th>{{ column_name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for property in properties %}
+                    <tr>
+                        {% for column_id, _ in columns %}
+                        <td>
+                            {% set value = property[column_id] %}
+                            {% if value is none %}
+                                -
+                            {% elif column_id in ['receive_date', 'contract_date', 'first_cert_date', 'archive_time', 'modify_time'] %}
+                                {{ value.strftime('%Y-%m-%d %H:%M:%S') if value else '-' }}
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <a href="{{ url_for('main.index') }}" class="button">返回首页</a>
+    </div>
+</div>
+{% endblock %} 

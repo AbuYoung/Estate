@@ -1,0 +1,208 @@
+/* 基础样式 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+nav {
+    background-color: #333;
+    padding: 1rem;
+}
+
+.nav-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.upload-form {
+    margin: 2rem 0;
+    padding: 2rem;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #f8f9fa;
+}
+
+button[type="submit"] {
+    margin-top: 1rem;
+    padding: 0.5rem 2rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #444;
+}
+
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.upload-history {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.upload-history h3 {
+    margin-bottom: 1rem;
+}
+
+.upload-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.upload-history-table th,
+.upload-history-table td {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.upload-history-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.upload-history-table .filename {
+    word-break: break-all;
+}
+
+/* 数据预览页面样式 */
+.upload-info {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.preview-table th,
+.preview-table td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.preview-table th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+}
+
+.preview-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.preview-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.preview-link:hover {
+    text-decoration: underline;
+}
+
+.actions {
+    margin: 2rem 0;
+}
+
+.button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.button:hover {
+    background-color: #444;
+}
+
+/* 统计卡片样式 */
+.statistics-card {
+    transition: transform 0.2s;
+}
+
+.statistics-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 图表容器样式 */
+#chart {
+    min-height: 400px;
+    width: 100%;
+}
+
+/* 进度条样式 */
+.progress {
+    height: 20px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    float: left;
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    background-color: #337ab7;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    transition: width .6s ease;
+} 

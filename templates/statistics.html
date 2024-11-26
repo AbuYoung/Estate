@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">数据统计分析</h2>
+    
+    <!-- 添加日期选择表单 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="dateRangeForm" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="start_date" class="form-label">开始日期</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" 
+                           value="{{ start_date }}" required>
+                </div>
+                <div class="col-auto">
+                    <label for="end_date" class="form-label">结束日期</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" 
+                           value="{{ end_date }}" required>
+                </div>
+                <div class="col-auto" style="margin-top: 32px;">
+                    <button type="submit" class="btn btn-primary">查询统计</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- 数量统计卡片 -->
+        <div class="col-md-6 mb-4">
+            <div class="card statistics-card">
+                <div class="card-body">
+                    <h5 class="card-title">房屋上市总量</h5>
+                    <h2 class="card-text">{{ total_count }} 套</h2>
+                    <p class="text-muted">统计周期：{{ start_date }} 至 {{ end_date }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 面积统计卡片 -->
+        <div class="col-md-6 mb-4">
+            <div class="card statistics-card">
+                <div class="card-body">
+                    <h5 class="card-title">房屋上市总面积</h5>
+                    <h2 class="card-text">{{ total_area }} 平方米</h2>
+                    <p class="text-muted">统计周期：{{ start_date }} 至 {{ end_date }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="row mt-4">
+        <!-- 数量趋势图 -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">月度房屋上市数量趋势</h5>
+                    <div id="countChart"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 面积趋势图 -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">月度房屋上市面积趋势</h5>
+                    <div id="areaChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 将模板变量转换为 JavaScript 变量
+    const monthsData = JSON.parse('{{ months|tojson|safe }}');
+    const countsData = JSON.parse('{{ counts|tojson|safe }}');
+    const areasData = JSON.parse('{{ areas|tojson|safe }}');
+    
+    // 创建数量趋势图
+    var countCtx = document.getElementById('countChart');
+    if (countCtx) {
+        new Chart(countCtx, {
+            type: 'bar',
+            data: {
+                labels: monthsData,
+                datasets: [{
+                    label: '上市房屋数量',
+                    data: countsData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '房屋数量（套）'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // 创建面积趋势图
+    var areaCtx = document.getElementById('areaChart');
+    if (areaCtx) {
+        new Chart(areaCtx, {
+            type: 'bar',
+            data: {
+                labels: monthsData,
+                datasets: [{
+                    label: '上市房屋面积',
+                    data: areasData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '建筑面积（平方米）'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // 添加日期验证
+    document.getElementById('dateRangeForm').addEventListener('submit', function(e) {
+        const startDate = new Date(document.getElementById('start_date').value);
+        const endDate = new Date(document.getElementById('end_date').value);
+        
+        if (startDate > endDate) {
+            e.preventDefault();
+            alert('开始日期不能大于结束日期');
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>上传数据文件</h2>
+    
+    <div class="upload-form">
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" accept=".xlsx" class="form-control mb-3">
+            
+            <!-- 进度条区域 -->
+            <div id="progressArea" style="display: none;">
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" style="width: 0%" 
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+                <div id="progressPhase" class="text-muted mb-2">准备上传...</div>
+            </div>
+            
+            <!-- 状态提示 -->
+            <div id="uploadStatus" class="alert" style="display: none;"></div>
+            
+            <button type="submit" class="btn btn-primary" id="uploadButton">上传文件</button>
+        </form>
+    </div>
+
+    <!-- 上传历史部分保持不变 -->
+    {% if recent_uploads %}
+    <div class="upload-history">
+        <h3>最近上传记录</h3>
+        <table class="upload-history-table">
+            <colgroup>
+                <col style="width: 40%">
+                <col style="width: 20%">
+                <col style="width: 20%">
+                <col style="width: 20%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>上传时间</th>
+                    <th>记录数量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for upload in recent_uploads %}
+                <tr>
+                    <td class="filename">{{ upload.filename }}</td>
+                    <td>{{ upload.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{{ upload.record_count }}</td>
+                    <td><a href="{{ url_for('main.preview', upload_id=upload.id) }}" class="preview-link">预览数据</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+{% block scripts %}
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const fileInput = document.getElementById('fileInput');
+    const progressBar = document.querySelector('.progress-bar');
+    const progressArea = document.getElementById('progressArea');
+    const progressPhase = document.getElementById('progressPhase');
+    const statusDiv = document.getElementById('uploadStatus');
+    const uploadButton = document.getElementById('uploadButton');
+    
+    if (!fileInput.files.length) {
+        showStatus('请选择文件', 'alert-danger');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // 显示进度区域
+    progressArea.style.display = 'block';
+    uploadButton.disabled = true;
+    
+    // 发送请求
+    fetch(form.action || window.location.href, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        const reader = response.body.getReader();
+        let decoder = new TextDecoder();
+        
+        function readStream() {
+            reader.read().then(({done, value}) => {
+                if (done) {
+                    return;
+                }
+                
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+                
+                lines.forEach(line => {
+                    if (line) {
+                        try {
+                            const data = JSON.parse(line);
+                            
+                            // 更新进度条和状态
+                            if (data.progress !== undefined) {
+                                progressBar.style.width = data.progress + '%';
+                                progressBar.textContent = data.progress + '%';
+                            }
+                            
+                            if (data.message) {
+                                progressPhase.textContent = data.message;
+                            }
+                            
+                            // 处理完成或错误
+                            if (data.phase === 'complete' || data.phase === 'error') {
+                                uploadButton.disabled = false;
+                                showStatus(data.message, data.success ? 'alert-success' : 'alert-danger');
+                                
+                                if (data.success) {
+                                    // 延迟1秒后刷新页面
+                                    setTimeout(() => window.location.reload(), 1000);
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                        }
+                    }
+                });
+                
+                readStream();
+            });
+        }
+        
+        readStream();
+    })
+    .catch(error => {
+        uploadButton.disabled = false;
+        showStatus('上传失败：' + error.message, 'alert-danger');
+    });
+    
+    function showStatus(message, className) {
+        statusDiv.textContent = message;
+        statusDiv.className = 'alert ' + className;
+        statusDiv.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

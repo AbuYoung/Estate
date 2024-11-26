@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>欢迎使用包头市房地产数据分析平台</h1>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="dashboard">
+        <!-- 这里可以添加数据分析的概览信息 -->
+    </div>
+    
+    <div class="row">
+        <!-- 假设这里有其他功能卡片 -->
+        
+        <!-- 添加新的统计分析功能卡片 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">统计数据分析</h5>
+                    <p class="card-text">查看详细的数据统计和分析报告，帮助您更好地理解数据趋势。</p>
+                    <a href="{{ url_for('main.statistics') }}" class="btn btn-primary">查看统计</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
